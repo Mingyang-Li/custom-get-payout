@@ -126,9 +126,8 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
 
   let stakerRewards: DeriveStakerReward[][];
   if (!ownValidators?.length && !!filteredEras.length && stashIds){
-    stakerRewards = await api.derive.staking?.stakerRewardsMultiEras(
-      stashIds, filteredEras,
-    )
+    stakerRewards = await api.derive.staking?.stakerRewardsMultiEras(stashIds, filteredEras);
+    console.log("stakerRewards: " + stakerRewards);
   }
   
   let erasPoints: any;
@@ -138,7 +137,7 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
   
   let erasRewards: any;
   if (!!validatorEras.length && !!filteredEras.length) {
-    api.derive.staking._erasRewards(filteredEras, false)
+    erasRewards = await api.derive.staking._erasRewards(filteredEras, false)
   };
 
   //first useeffect alt
