@@ -1,5 +1,4 @@
-// Copyright 2017-2021 @polkadot/react-hooks authors & contributors
-// SPDX-License-Identifier: Apache-2.0
+// Code inspired from https://github.com/polkadot-js/apps/blob/299c95eb3dbdb4ea5baa10c830af9164eb9bac64/packages/react-hooks/src/useOwnEraRewards.ts
 
 import { ApiPromise, WsProvider } from '@polkadot/api';
 import type { DeriveEraPoints, DeriveEraRewards, DeriveStakerReward } from '@polkadot/api-derive/types';
@@ -50,13 +49,7 @@ const EMPTY_STATE: State = {
   rewardCount: 0
 };
 
-function getRewards (
-  [
-    [stashIds], available
-  ] : [
-        [ string[] ], DeriveStakerReward[][]
-      ]
-  ): State {
+function getRewards ([[stashIds], available] : [[string[]], DeriveStakerReward[][]]): State {
   const allRewards: Record<string, DeriveStakerReward[]> = {};
 
   stashIds.forEach((stashId, index): void => {
@@ -129,7 +122,7 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
   const stashIds = ["J9AG77fz7qgtYyySGgeHnJTsKrsUa5J6mrLandL7RyYUos7"];
 
   // const allEras = useCall<EraIndex[]>(api.derive.staking?.erasHistoric); // just use api.derive.staking?.erasHistoric to get all the eras
-  const allEras = api.derive.staking?.erasHistoric;
+  const allEras = await api.derive.staking.erasHistoric(true);
 
   let stakerRewards: DeriveStakerReward[][];
   if (!ownValidators?.length && !!filteredEras.length && stashIds){
@@ -148,7 +141,7 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
     api.derive.staking._erasRewards(filteredEras, false)
   };
 
-  //first useeffect
+  //first useeffect alt
   state = { allRewards: null, isLoadingRewards: true, rewardCount: 0 };
 
   // second useeffect
@@ -164,9 +157,13 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
       };
       filtered = { filteredEras, validatorEras };
     } else if (ownValidators?.length) {
-      ownValidators.forEach(({ stakingLedger, stashId }): void => {
+      ownValidators.forEach( ({ stakingLedger, stashId }): void => {
         if (stakingLedger) {
-          const eras = filteredEras.filter((era) => !stakingLedger.claimedRewards.some((c) => era.eq(c)));
+          const eras = filteredEras.filter((era) => {
+            !stakingLedger.claimedRewards.some((c) => {
+              era.eq(c);
+            })
+          });
 
           if (eras.length) {
             validatorEras.push({ eras, stashId });
