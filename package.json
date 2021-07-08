@@ -1,8 +1,8 @@
 {
-  "name": "node-ts-starter",
+  "name": "custom-get-payout",
   "version": "2.0.0",
   "main": "index.js",
-  "author": "Horus Lugo",
+  "author": "Mingyang Li",
   "license": "MIT",
   "scripts": {
     "dev": "tsnd --respawn --files -r @babel/register --inspect -- src/index.ts",
