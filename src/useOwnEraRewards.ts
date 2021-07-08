@@ -143,6 +143,9 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
   //first useeffect alt
   state = { allRewards: null, isLoadingRewards: true, rewardCount: 0 };
 
+  console.log(`allEras: ${allEras}`);
+  console.log(`allEras && maxEras: ${typeof(allEras && maxEras)}`);
+
   // second useeffect
   if (allEras && maxEras) {
     const filteredEras = allEras.slice(-1 * maxEras);
