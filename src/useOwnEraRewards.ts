@@ -17,11 +17,6 @@ interface ValidatorWithEras {
   stashId: string;
 }
 
-interface Filtered {
-  filteredEras: EraIndex[];
-  validatorEras: ValidatorWithEras[];
-}
-
 interface StakerState {
     controllerId: string | null;
     destination?: RewardDestination;
@@ -40,6 +35,11 @@ interface StakerState {
     validatorPrefs?: ValidatorPrefs;
 }
 
+interface Filtered {
+  filteredEras: EraIndex[];
+  validatorEras: ValidatorWithEras[];
+}
+
 const EMPTY_FILTERED: Filtered = {
   filteredEras: [],
   validatorEras: []
@@ -49,9 +49,6 @@ const EMPTY_STATE: State = {
   isLoadingRewards: true,
   rewardCount: 0
 };
-
-let state: any = {};
-let filtered: any = {};
 
 function getRewards (
   [
@@ -116,32 +113,41 @@ function getValRewards (api: ApiPromise, validatorEras: ValidatorWithEras[], era
   };
 }
 
-export function useOwnEraRewards (maxEras?: number, ownValidators?: StakerState[]): State {
+export async function useOwnEraRewards (maxEras?: number, ownValidators?: StakerState[]): Promise<State> {
   // api initialisation
   const provider = new WsProvider(`wss://rpc.polkadot.io/`);
-  const api = async () => {
-    await ApiPromise.create({ provider })
-  };
+  const api = await ApiPromise.create({ provider});
+  
+  let state: any = {};
+  let { filteredEras, validatorEras } = EMPTY_FILTERED;
+  let filtered: any = {};
   
   // const mountedRef = useIsMountedRef(); // boolean
-  const mountedRef = false;
+  const mountedRef = true;
 
   // const stashIds = useOwnStashIds(); // // replace hook by manual entry
-  const stashIds = "J9AG77fz7qgtYyySGgeHnJTsKrsUa5J6mrLandL7RyYUos7";
+  const stashIds = ["J9AG77fz7qgtYyySGgeHnJTsKrsUa5J6mrLandL7RyYUos7"];
 
   // const allEras = useCall<EraIndex[]>(api.derive.staking?.erasHistoric); // just use api.derive.staking?.erasHistoric to get all the eras
   const allEras = api.derive.staking?.erasHistoric;
 
-  const [{ filteredEras, validatorEras }, setFiltered] = useState<Filtered>(EMPTY_FILTERED);
-  // state is an {} of 2 values of filtered eras and valusing the filter interface
+  let stakerRewards: DeriveStakerReward[][];
+
+  if (!ownValidators?.length && !!filteredEras.length && stashIds){
+    stakerRewards = await api.derive.staking?.stakerRewardsMultiEras(
+      stashIds, filteredEras,
+    )
+  }
   
-  // const [state, setState] = useState<State>(EMPTY_STATE);
+  // const erasPoints = useCall<DeriveEraPoints[]>(
+  //   !!validatorEras.length && !!filteredEras.length && api.derive.staking._erasPoints,
+  //   [filteredEras, false]
+  // );
   
-  const stakerRewards = useCall<[[string[]], DeriveStakerReward[][]]>(!ownValidators?.length && !!filteredEras.length && stashIds && api.derive.staking?.stakerRewardsMultiEras, [stashIds, filteredEras], { withParams: true });
-  
-  const erasPoints = useCall<DeriveEraPoints[]>(!!validatorEras.length && !!filteredEras.length && api.derive.staking._erasPoints, [filteredEras, false]);
-  
-  const erasRewards = useCall<DeriveEraRewards[]>(!!validatorEras.length && !!filteredEras.length && api.derive.staking._erasRewards, [filteredEras, false]);
+  // const erasRewards = useCall<DeriveEraRewards[]>(
+  //   !!validatorEras.length && !!filteredEras.length && api.derive.staking._erasRewards,
+  //   [filteredEras, false]
+  // );
 
   //first useeffect
   state = { allRewards: null, isLoadingRewards: true, rewardCount: 0 };
@@ -179,11 +185,6 @@ export function useOwnEraRewards (maxEras?: number, ownValidators?: StakerState[
       }
     }
     filtered = { filteredEras, validatorEras };
-  }
-
-  // 3rd useeffect
-  if (mountedRef.current && stakerRewards && !ownValidators) {
-    getRewards(stakerRewards);
   }
 
   //4th useeffect

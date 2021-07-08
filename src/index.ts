@@ -1,5 +1,13 @@
 import { useOwnEraRewards } from './useOwnEraRewards';
 
-const payout = useOwnEraRewards()
 
-console.log(payout);
+
+async function main(){
+
+
+    const r = useOwnEraRewards();
+
+    console.log(r);
+}
+
+main();
