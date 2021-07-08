@@ -132,22 +132,21 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
   const allEras = api.derive.staking?.erasHistoric;
 
   let stakerRewards: DeriveStakerReward[][];
-
   if (!ownValidators?.length && !!filteredEras.length && stashIds){
     stakerRewards = await api.derive.staking?.stakerRewardsMultiEras(
       stashIds, filteredEras,
     )
   }
   
-  // const erasPoints = useCall<DeriveEraPoints[]>(
-  //   !!validatorEras.length && !!filteredEras.length && api.derive.staking._erasPoints,
-  //   [filteredEras, false]
-  // );
+  let erasPoints: any;
+  if (!!validatorEras.length && !!filteredEras.length) {
+    erasPoints = await api.derive.staking._erasPoints(filteredEras, false)
+  }
   
-  // const erasRewards = useCall<DeriveEraRewards[]>(
-  //   !!validatorEras.length && !!filteredEras.length && api.derive.staking._erasRewards,
-  //   [filteredEras, false]
-  // );
+  let erasRewards: any;
+  if (!!validatorEras.length && !!filteredEras.length) {
+    api.derive.staking._erasRewards(filteredEras, false)
+  };
 
   //first useeffect
   state = { allRewards: null, isLoadingRewards: true, rewardCount: 0 };
