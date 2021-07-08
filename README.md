@@ -2,11 +2,10 @@
 
 ## Getting started
 
-1. Clone this repository and open it
+1. Clone template repository and open it
 
 ```bash
-$ git clone https://github.com/HorusGoul/node-ts-starter your-next-project
-$ cd your-next-project
+https://github.com/HorusGoul/node-ts-starter
 ```
 
 2. Install dependencies
@@ -41,7 +40,3 @@ The intent of this starter is to be really slim so it's not a nightmare to remov
 - `yarn typecheck`. Checks the typings of the project. Gets executed before trying to create a new commit but you can also run it manually.
 - `yarn start`. Runs the compiled program. Remember to execute `yarn build` before attempting to launch the program.
 - `yarn lint`. Runs ESLint. You can append `--fix` in order to fix autofixable issues.
-
-## What to do next
-
-Adapt the configuration to your needs and start coding!
