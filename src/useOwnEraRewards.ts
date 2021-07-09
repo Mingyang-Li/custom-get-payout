@@ -108,7 +108,7 @@ function getValRewards (api: ApiPromise, validatorEras: ValidatorWithEras[], era
 
 export async function useOwnEraRewards (maxEras?: number, ownValidators?: StakerState[]): Promise<State> {
   // api initialisation
-  const provider = new WsProvider(`wss://rpc.polkadot.io/`);
+  const provider = new WsProvider('wss://kusama-rpc.polkadot.io/')
   const api = await ApiPromise.create({ provider});
   
   let state: any = {};
@@ -143,7 +143,7 @@ export async function useOwnEraRewards (maxEras?: number, ownValidators?: Staker
   //first useeffect alt
   state = { allRewards: null, isLoadingRewards: true, rewardCount: 0 };
 
-  console.log(`allEras: ${allEras}`);
+  console.log(`allEras[0]: ${allEras[0]}`);
   console.log(`allEras && maxEras: ${typeof(allEras && maxEras)}`);
 
   // second useeffect
