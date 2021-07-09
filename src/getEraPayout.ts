@@ -11,7 +11,7 @@ export async function getEraPayout(eraNumber: number, validatorId: string) {
 
     // Checking payouts from this particulat era
     // const allEraPayouts = await api.query.staking.erasStakers;
-    const allEraPayouts: any= [{ payoutId: 1, isClaimed: false, claimedBy: "me" }];
+    const allEraPayouts: any= [{ payoutId: 1, isClaimed: false, claimedBy: "me" }]; // placeholder
 
     // Checking which payouts are claimed and unclaimed
     const payoutsByClaimedStatus = allEraPayouts.map((p: any) => {
@@ -33,11 +33,12 @@ export async function getEraPayout(eraNumber: number, validatorId: string) {
                 ]
             }
         })
+        return arr;
     }
 
     const claimedPayoutByClaimers = getClaimedPayoutsByClaimers();
 
-    // For all payouts claimed by the system, find out which era did each payout happen within
+    // For all payouts claimed by the system, find out which era did each payout happen within 
 
     return { allEraPayouts, payoutsByClaimedStatus, claimedPayoutByClaimers };
 }
