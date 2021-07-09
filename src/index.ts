@@ -1,5 +1,6 @@
-// import { useOwnEraRewards } from './useOwnEraRewards';
+import { useOwnEraRewards } from './useOwnEraRewards';
 import { getEraPayout } from './getEraPayout';
+
 
 async function main(){
     const data = {
