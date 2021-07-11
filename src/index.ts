@@ -3,12 +3,8 @@ import { getEraPayout } from './getEraPayout';
 
 
 async function main(){
-    const data = {
-        eraNumber: 2436,
-        validatorId: "8162390"
-    }
-    const r = getEraPayout(data.eraNumber, data.validatorId);
-    r.then((res) => console.table(res));
+    const r = getEraPayout(2435);
+    r.then((res) => console.log(res.totalStakingAmount));
 }
 
 main();
@@ -33,3 +29,8 @@ main();
 // claimed at block hash: 0xc9845b0733e6319ab537d6801dcaba46110003e6dffaa4a2cb5f0a78ba872dd3
 // block hash from this url: https://kusama.subscan.io/block/8162390?tab=extrinsic
 // validator: https://kusama.subscan.io/block/8162390?tab=extrinsic
+
+// new req
+// given an era num, we're able to get all val id for that era
+// can get total reward, reward point (is a ratio that can be used to get rewards)
+// 
