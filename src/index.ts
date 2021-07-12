@@ -4,7 +4,10 @@ import { getEraPayout } from './getEraPayout';
 
 async function main(){
     const r = getEraPayout(2435);
-    r.then((res) => console.log(res.totalStakingAmount));
+    r.then((res) => {
+        // console.log(res.validators);
+        console.log(res.totalStakingAmount)
+    });
 }
 
 main();
