@@ -1,12 +1,11 @@
-import { useOwnEraRewards } from './useOwnEraRewards';
 import { getEraPayout } from './getEraPayout';
 
 
 async function main(){
-    const r = getEraPayout(2435);
+    const r = getEraPayout(2480);
     r.then((res) => {
-        // console.log(res.validators);
-        console.log(res.totalStakingAmount)
+        console.table(res.validators);
+        // console.log(res.totalStakingAmount)
     });
 }
 

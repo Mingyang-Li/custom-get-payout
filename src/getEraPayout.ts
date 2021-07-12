@@ -1,8 +1,6 @@
 import { ApiPromise, WsProvider } from '@polkadot/api';
-import { EraRewardPoints, AccountId } from '@polkadot/types/interfaces';
+import { EraRewardPoints, EraIndex } from '@polkadot/types/interfaces';
 import { AnyNumber } from '@polkadot/types/types';
-import { type } from 'os';
-import { parse } from 'path';
 
 export async function getEraPayout(eraNumber: number) {
     // api initialisation
@@ -12,27 +10,30 @@ export async function getEraPayout(eraNumber: number) {
     type validatorsType = {
         validatorId: string;
         rewardPoints: number,
-        stakingPercentage: AnyNumber
+        stakingPercentage: AnyNumber,
+        amountRewarded: AnyNumber,
     }
 
-    // get total rewards
+    // get all rewards data
     const totalRewards = (await api.query.staking.erasRewardPoints<EraRewardPoints>(eraNumber));
 
+    // get total reward points
+    const totalRewardPoints = parseInt(totalRewards.total.toString());
+
     // get the $$$ amount staked
-    const stakingAmount = await api.query.staking.erasTotalStake(eraNumber)
-    const strStakingAmount = stakingAmount.toBigInt().toString();
-    const totalStakingAmount = parseInt(strStakingAmount.slice(0, strStakingAmount.length-1));
+    const rewardAmount = await api.query.staking.erasValidatorReward(eraNumber);
+    const totalRewardAmount = Number(rewardAmount.toString());
+    // const totalStakingAmount = parseInt(strStakingAmount.slice(0, strStakingAmount.length-1));
 
     // calculate payout data and store 
     let validators: validatorsType[] = [];
     totalRewards.individual.forEach((value, key)=> {
-        // console.log(`account: ${key}, reward points: ${value.toString()}`)
         validators.push({
             validatorId: key.toString(),
             rewardPoints: parseInt(value.toString()),
-            stakingPercentage: parseInt(value.toString()) / totalStakingAmount * 100
+            stakingPercentage: parseInt(value.toString()) / totalRewardPoints * 100,
+            amountRewarded: (parseInt(value.toString()) / totalRewardPoints) * 100 * totalRewardAmount
         })
     })
-
-    return { validators, totalStakingAmount };
+    return { totalRewardPoints, validators, totalRewardAmount };
 }
